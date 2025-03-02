@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String,DateTime,Enum, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String,DateTime,Enum, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 from datetime import datetime
@@ -21,9 +21,9 @@ class TempatWisata(Base):
 
     id_tempat_wisata = Column(Integer, primary_key=True, index=True)
     nama_tempat = Column(String, unique=True, index=True)
-    alamat = Column(String)
+    alamat = Column(Text)
     kategori = Column(Enum("Alam","Religi","Buatan",name="kategori_tempat"), default="Alam",nullable=False)
-    deskripsi = Column(String)
+    deskripsi = Column(Text)
     gambar = Column(String)
     kontak = Column(String)
     created_at = Column(DateTime, default=datetime.now)
@@ -63,7 +63,6 @@ class TiketWisata(Base):
     umur = Column(Enum("Dewasa", "Anak-anak", name="umur_tiket"), default="Dewasa", nullable=False)
     hari = Column(Enum("Weekday", "Weekend/Hari Libur", name="hari_tiket"), default="Weekday", nullable=False)
     harga = Column(Integer)
-    keterangan = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
 
