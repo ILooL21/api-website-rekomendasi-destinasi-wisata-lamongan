@@ -53,6 +53,8 @@ cd api-website-rekomendasi-destinasi-wisata-lamongan
 ```bash
 # buat virtual environment
 python -m venv venv
+
+# aktifkan virtual environment
 source venv/bin/activate  # Mac/Linux
 venv\Scripts\activate     # Windows
 
@@ -63,16 +65,22 @@ pip install -r requirements.txt
 ### 3️⃣ Konfigurasi Environment
 Copy file `.env.example` ke `.env`, lalu sesuaikan konfigurasi database dan secret key:
 ```
-DB_ENGINE=postgresql
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=your_database
-SECRET_KEY=your_secret_key
-ALGORITHM=HS256
+# Database Configuration
+DB_ENGINE=your_database_engine_here
+DB_USERNAME=your_username_here
+DB_PASSWORD=your_password_here
+DB_HOST=your_host_here
+DB_PORT=your_port_here
+DB_NAME=your_database_name
+
+# Security Settings
+SECRET_KEY=your_secret_key_here
+ALGORITHM=your_algorithm_here
 ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# Application Settings
 DEBUG=True
+
 ```
 
 ### 4️⃣ Jalankan Migrasi Database

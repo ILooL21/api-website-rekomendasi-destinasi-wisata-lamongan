@@ -1,16 +1,13 @@
 from fastapi import FastAPI
-from app.db.session import check_db_connection
+from app.db.session import engine
+from app.db.base import Base
+from app.api.routes import auth_routes, user_routes
 
-app = FastAPI()
+# Inisialisasi database
+Base.metadata.create_all(bind=engine)
 
-# check database connection
-check_db_connection()
+app = FastAPI(title="FastAPI User Authentication")
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+# Memasukkan routes
+app.include_router(auth_routes.router, prefix="/api/auth", tags=["Authentication"])
+app.include_router(user_routes.router, prefix="/api/users", tags=["Users"])

@@ -10,11 +10,15 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     password = Column(String)
+    role = Column(Enum("admin","user",name="role"), default="user",nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
 
     # Relasi ke rekomendasi wisata (one to one)
-    rekomendasi = relationship("RekomendasiWisata", back_populates="user")
+    rekomendasi_wisata = relationship("RekomendasiWisata", back_populates="user")
+
+    # Relasi ke Artikel (one to many)
+    artikel = relationship("Artikel", back_populates="user")
 
 class TempatWisata(Base):
     __tablename__ = "tempat_wisata"
@@ -22,7 +26,7 @@ class TempatWisata(Base):
     id_tempat_wisata = Column(Integer, primary_key=True, index=True)
     nama_tempat = Column(String, unique=True, index=True)
     alamat = Column(Text)
-    kategori = Column(Enum("Alam","Religi","Buatan",name="kategori_tempat"), default="Alam",nullable=False)
+    jenis = Column(Enum("Alam","Religi","Buatan",name="jenis_tempat"), default="Alam",nullable=False)
     deskripsi = Column(Text)
     gambar = Column(String)
     kontak = Column(String)
@@ -59,9 +63,9 @@ class TiketWisata(Base):
 
     id_tiket = Column(Integer, primary_key=True, index=True)
     id_tempat_wisata = Column(Integer, ForeignKey("tempat_wisata.id_tempat_wisata", ondelete="CASCADE"))
-    kategori = Column(Enum("Reguler", "VIP", name="kategori_tiket"), default="Reguler", nullable=False)
-    umur = Column(Enum("Dewasa", "Anak-anak", name="umur_tiket"), default="Dewasa", nullable=False)
-    hari = Column(Enum("Weekday", "Weekend/Hari Libur", name="hari_tiket"), default="Weekday", nullable=False)
+    kategori = Column(Enum("Reguler", "VIP", name="kategori"), default="Reguler", nullable=False)
+    umur = Column(Enum("Dewasa", "Anak-anak", name="umur"), default="Dewasa", nullable=False)
+    hari = Column(Enum("Weekday", "Weekend/Hari Libur", name="hari"), default="Weekday", nullable=False)
     harga = Column(Integer)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
@@ -74,7 +78,7 @@ class SosmedWisata(Base):
 
     id_sosmed = Column(Integer, primary_key=True, index=True)
     id_tempat_wisata = Column(Integer, ForeignKey("tempat_wisata.id_tempat_wisata", ondelete="CASCADE"))
-    sosmed = Column(Enum("Facebook","Instagram","Twitter","Youtube","Tiktok",name="sosmed"), nullable=False)
+    sosmed = Column(Enum("Facebook","Instagram","Twitter","Youtube","Tiktok",name="sosial_media"), nullable=False)
     link = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
@@ -89,6 +93,9 @@ class RekomendasiWisata(Base):
     id_user = Column(Integer, ForeignKey("users.id_user"))
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
+
+    # Relasi ke user (one to one)
+    user = relationship("User", back_populates="rekomendasi_wisata")
 
     # Relasi ke tempat wisata (one ke banyak)
     wisata = relationship("RekomendasiWisataDetail", back_populates="rekomendasi", cascade="all, delete-orphan")
@@ -110,11 +117,14 @@ class Artikel(Base):
     __tablename__ = "artikel"
 
     id_artikel = Column(Integer, primary_key=True, index=True)
+    id_penulis = Column(ForeignKey("users.id_user"))
     judul = Column(String, index=True)
     isi = Column(String)
-    penulis = Column(String)
     tanggal = Column(String)
     gambar = Column(String)
-    tipe = Column(Enum("Berita","Promosi",name="tipe_artikel"), default="Berita",nullable=False)
+    tipe = Column(Enum("Berita","Promo",name="tipe-artikel"), default="Berita",nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
+
+    # Relasi ke penulis
+    user = relationship("User", back_populates="artikel")
