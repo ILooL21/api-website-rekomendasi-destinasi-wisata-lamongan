@@ -19,6 +19,22 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "defaultsecretkey"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+    # Application Settings
+    APP_HOST: str = "127.0.0.1"
+    APP_PORT: int = 8000
     DEBUG: bool = True
+
+    # CORS Settings
+    ALLOWED_HOSTS: str = "*"
+    ALLOWED_METHODS: str = "*"
+    ALLOWED_HEADERS: str = "*"
+    ALLOWED_CREDENTIALS: bool = True
+
+    # Email Config
+    SMTP_SERVER: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    EMAIL_ADDRESS: str = "lamongantrip@gmail.com"
+    EMAIL_PASSWORD: str = "kdfr ofme qgcz eknn"
 
 settings = Settings()

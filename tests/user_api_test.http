@@ -1,0 +1,74 @@
+###
+# Create a user
+POST http://127.0.0.1:8000/api/users/register
+Content-Type: application/json
+
+{
+    "username": "user1",
+    "email": "user1@gmail.com",
+    "password": "password"
+}
+
+###
+POST http://127.0.0.1:8000/api/users/register
+Content-Type: application/json
+
+{
+    "username": "user2",
+    "email": "user2@gmail.com",
+    "password": "password"
+}
+###
+
+#get active users
+GET http://127.0.0.1:8000/api/users/me
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQxMjY2NzI2fQ.vwEgiktj-Yb2Nu7h7Xblh1eBVzD2LHsb7yGAUeVvszU
+
+###
+# Get all users
+GET http://127.0.0.1:8000/api/users/
+Content-Type: application/json
+
+###
+# Get a user
+GET http://127.0.0.1:8000/api/users/1
+Content-Type: application/json
+
+###
+#Update a user
+PUT http://127.0.0.1:8000/api/users/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQxMDMxODUyfQ.S93rb6YQH1DiAXZL8_KI3_JP5lRkqEJioRWbOcJ0LHo
+
+{
+    "username": "user1",
+    "email": "user4@gmail.com",
+    "password": "password123",
+    "role" : "admin"
+}
+
+###
+PUT http://127.0.0.1:8000/api/users/3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQxMDMxODUyfQ.S93rb6YQH1DiAXZL8_KI3_JP5lRkqEJioRWbOcJ0LHo
+
+{
+    "username": "user2",
+    "email": "user3@gmail.com",
+    "password": "password",
+    "role" : "admin"
+}
+
+###
+# Delete a user
+DELETE http://127.0.0.1:8000/api/users/1/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQxMDMxODUyfQ.S93rb6YQH1DiAXZL8_KI3_JP5lRkqEJioRWbOcJ0LHo
+
+###
+DELETE http://127.0.0.1:8000/api/users/3/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQxMDMxODUyfQ.S93rb6YQH1DiAXZL8_KI3_JP5lRkqEJioRWbOcJ0LHo
+
+###

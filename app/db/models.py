@@ -128,3 +128,13 @@ class Artikel(Base):
 
     # Relasi ke penulis
     user = relationship("User", back_populates="artikel")
+
+class MailLog(Base):
+    __tablename__ = "mail_log"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String)
+    subject = Column(String)
+    message = Column(String)
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, onupdate=datetime.now)

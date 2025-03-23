@@ -42,8 +42,7 @@ def verify_token(token: str):
 
 # Dependency untuk mendapatkan pengguna dari token
 def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(status_code=401, detail="Tidak dapat memvalidasi token")
     payload = verify_token(token)
     if payload is None or "sub" not in payload:
-        raise credentials_exception
+        raise HTTPException(status_code=401, detail="Tidak dapat memvalidasi token")
     return payload["sub"]
