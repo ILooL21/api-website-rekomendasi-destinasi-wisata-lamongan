@@ -26,9 +26,9 @@ class Settings(BaseSettings):
     DEBUG: bool = True
 
     # CORS Settings
-    ALLOWED_HOSTS: str = "*"
-    ALLOWED_METHODS: str = "*"
-    ALLOWED_HEADERS: str = "*"
+    ALLOWED_HOSTS: list[str] = ["*"]
+    ALLOWED_METHODS: list[str] = ["*"]
+    ALLOWED_HEADERS: list[str] = ["*"]
     ALLOWED_CREDENTIALS: bool = True
 
     # Email Config

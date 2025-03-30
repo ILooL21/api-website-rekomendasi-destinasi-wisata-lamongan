@@ -2,11 +2,6 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.db.models import MailLog
 from app.schemas.contact import ContactCreate
-from app.core.config import settings
-
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
 # Membuat log email
 def create_mail_log(db: Session, contact_data: ContactCreate):
@@ -28,33 +23,13 @@ def get_all_mail_logs(db: Session):
 def get_mail_log_by_id(db: Session, id_contact: int):
     return db.query(MailLog).filter(MailLog.id == id_contact).first()
 
-# send reply email
-def send_reply_mail(db: Session, id_contact: int, contact_data: ContactCreate):
-    try:
-        msg = MIMEMultipart()
-        msg['From'] = settings.EMAIL_ADDRESS
-        msg['To'] = contact_data.email
-        msg['Subject'] = contact_data.subject
-
-        msg.attach(MIMEText(contact_data.message))
-
-        with smtplib.SMTP(settings.SMTP_SERVER,settings.SMTP_PORT) as server:
-            server.starttls()
-            server.login(settings.EMAIL_ADDRESS, settings.EMAIL_PASSWORD)
-            server.sendmail(settings.EMAIL_ADDRESS, contact_data.email, msg.as_string())
-            server.quit()
-
-        # hapus email dari database
-        # db_contact = get_mail_log_by_id(db, id_contact)
-        # db.delete(db_contact)
-        # db.commit()
-        return HTTPException(status_code=204, detail="Email sent")
-    except:
-        raise HTTPException(status_code=500, detail="Failed to send email")
-
-# membalas email
-def reply_mail(db: Session, id_contact: int, message: str):
+# hapus log email
+def delete_mail_log(db: Session, id_contact: int):
     db_contact = get_mail_log_by_id(db, id_contact)
-    contact_data = ContactCreate(email=db_contact.email, subject="Re: "+db_contact.subject, message=message)
-    return send_reply_mail(db, id_contact, contact_data)
+    if db_contact:
+        db.delete(db_contact)
+        db.commit()
+        return {"message": "Mail log deleted"}
+    else:
+        raise HTTPException(status_code=404, detail="Mail log not found")
 

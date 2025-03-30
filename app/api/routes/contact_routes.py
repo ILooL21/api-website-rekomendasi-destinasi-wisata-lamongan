@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Path
 from sqlalchemy.orm import Session
 from app.schemas.contact import ContactCreate, ContactResponse
-from app.services.contact_services import create_mail_log, get_all_mail_logs, reply_mail,get_mail_log_by_id
+from app.services.contact_services import create_mail_log, get_all_mail_logs, get_mail_log_by_id, delete_mail_log
 from app.api.dependencies import get_db
 
 
@@ -27,8 +27,5 @@ def reply_mail_log(id_contact: int = Path(..., title="Contact ID", description="
     return reply_mail(db, id_contact, message)
 
 @router.delete("/{id_contact}/delete")
-def delete_mail_log(id_contact: int = Path(..., title="Contact ID", description="Must be an integer"), db: Session = Depends(get_db)):
-    db_contact = get_mail_log_by_id(db, id_contact)
-    db.delete(db_contact)
-    db.commit()
-    return {"message": "Mail log deleted"}
+def delete_mail(id_contact: int = Path(..., title="Contact ID", description="Must be an integer"), db: Session = Depends(get_db)):
+    return delete_mail_log(db, id_contact)

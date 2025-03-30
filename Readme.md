@@ -79,7 +79,21 @@ ALGORITHM=your_algorithm_here
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 # Application Settings
+APP_HOST=your_host_here
+APP_PORT=your_port_here
 DEBUG=True
+
+# CORS Settings
+ALLOWED_HOSTS=your_allowed_host_here
+ALLOWED_METHODS=your_allowed_methods_here
+ALLOWED_HEADERS=your_allowed_headers_here
+ALLOWED_CREDENTIALS=True
+
+# Email Settings
+SMTP_HOST=your_smtp_host_here
+SMTP_PORT=your_smtp_port_here
+EMAIL_ADDRESS=your_email_address_here
+EMAIL_PASSWORD=yout_email_password_here
 
 ```
 

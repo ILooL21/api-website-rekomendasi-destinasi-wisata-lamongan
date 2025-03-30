@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String,DateTime,Enum, ForeignKey, Text
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 from datetime import datetime
@@ -123,6 +124,7 @@ class Artikel(Base):
     tanggal = Column(String)
     gambar = Column(String)
     tipe = Column(Enum("Berita","Promo",name="tipe-artikel"), default="Berita",nullable=False)
+    tags = Column(ARRAY(String), default=[])
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
 
