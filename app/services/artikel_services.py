@@ -9,7 +9,6 @@ from app.schemas.artikel import ArtikelRequestWithFormData
 from app.core.image import delete_image,simpan_gambar_unik
 
 
-
 UPLOAD_FOLDER = "public/artikel/"
 
 async def create_artikel(

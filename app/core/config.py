@@ -31,10 +31,4 @@ class Settings(BaseSettings):
     ALLOWED_HEADERS: list[str] = ["*"]
     ALLOWED_CREDENTIALS: bool = True
 
-    # Email Config
-    SMTP_SERVER: str = "smtp.gmail.com"
-    SMTP_PORT: int = 587
-    EMAIL_ADDRESS: str = "lamongantrip@gmail.com"
-    EMAIL_PASSWORD: str = "kdfr ofme qgcz eknn"
-
 settings = Settings()

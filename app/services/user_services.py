@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from app.db.models import User
+from app.db.models import User,RekomendasiWisata
 from app.schemas.user import UserCreate, UserSchema
 from app.core.security import hash_password, verify_password
 from typing import List
@@ -9,15 +9,30 @@ from typing import List
 # Membuat user baru
 def create_user(db: Session, user_data: UserCreate):
     hashed_password = hash_password(user_data.password)
+
+    # check apakah ini user pertama
+    first_user = db.query(User).first()
+    if not first_user:
+        role = "admin"
+    else:
+        role = user_data.role if user_data.role else "user"
+
     db_user = User(
         username=user_data.username,
         email=user_data.email,
         password=hashed_password,
-        role = user_data.role if user_data.role else "user"
+        role = role
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+
+    # tambahkan user ke rekomendasi wisata
+    db_rekomendasi = RekomendasiWisata(id_user=db_user.id_user)
+    db.add(db_rekomendasi)
+    db.commit()
+    db.refresh(db_rekomendasi)
+
     return db_user
 
 # Mendapatkan user berdasarkan username

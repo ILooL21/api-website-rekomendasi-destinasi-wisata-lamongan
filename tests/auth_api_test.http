@@ -1,8 +1,0 @@
-###
-# Login user
-POST http://127.0.0.1:8000/api/auth/login
-Content-Type: application/x-www-form-urlencoded
-accept: application/json
-
-username=user1&password=password123
-###

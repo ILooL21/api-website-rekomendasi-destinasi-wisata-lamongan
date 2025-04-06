@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 4ba9faad8b0a
+Revision ID: 8b132d28dbc8
 Revises: 
-Create Date: 2025-03-25 12:34:37.183793
+Create Date: 2025-04-05 15:38:43.449888
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '4ba9faad8b0a'
+revision: str = '8b132d28dbc8'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -37,7 +37,6 @@ def upgrade() -> None:
     sa.Column('jenis', sa.Enum('Alam', 'Religi', 'Buatan', name='jenis_tempat'), nullable=False),
     sa.Column('deskripsi', sa.Text(), nullable=True),
     sa.Column('gambar', sa.String(), nullable=True),
-    sa.Column('kontak', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id_tempat_wisata')
@@ -73,17 +72,6 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_artikel_id_artikel'), 'artikel', ['id_artikel'], unique=False)
     op.create_index(op.f('ix_artikel_judul'), 'artikel', ['judul'], unique=False)
-    op.create_table('koordinat_wisata',
-    sa.Column('id_koordinat', sa.Integer(), nullable=False),
-    sa.Column('id_tempat_wisata', sa.Integer(), nullable=True),
-    sa.Column('latitude', sa.String(), nullable=True),
-    sa.Column('longitude', sa.String(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['id_tempat_wisata'], ['tempat_wisata.id_tempat_wisata'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id_koordinat')
-    )
-    op.create_index(op.f('ix_koordinat_wisata_id_koordinat'), 'koordinat_wisata', ['id_koordinat'], unique=False)
     op.create_table('rekomendasi_wisata',
     sa.Column('id_rekomendasi', sa.Integer(), nullable=False),
     sa.Column('id_user', sa.Integer(), nullable=True),
@@ -107,9 +95,8 @@ def upgrade() -> None:
     op.create_table('tiket_wisata',
     sa.Column('id_tiket', sa.Integer(), nullable=False),
     sa.Column('id_tempat_wisata', sa.Integer(), nullable=True),
-    sa.Column('kategori', sa.Enum('Reguler', 'VIP', name='kategori'), nullable=False),
     sa.Column('umur', sa.Enum('Dewasa', 'Anak-anak', name='umur'), nullable=False),
-    sa.Column('hari', sa.Enum('Weekday', 'Weekend/Hari Libur', name='hari'), nullable=False),
+    sa.Column('hari', sa.Enum('Hari Kerja', 'Hari Libur', name='hari'), nullable=False),
     sa.Column('harga', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
@@ -139,8 +126,6 @@ def downgrade() -> None:
     op.drop_table('sosmed_wisata')
     op.drop_index(op.f('ix_rekomendasi_wisata_id_rekomendasi'), table_name='rekomendasi_wisata')
     op.drop_table('rekomendasi_wisata')
-    op.drop_index(op.f('ix_koordinat_wisata_id_koordinat'), table_name='koordinat_wisata')
-    op.drop_table('koordinat_wisata')
     op.drop_index(op.f('ix_artikel_judul'), table_name='artikel')
     op.drop_index(op.f('ix_artikel_id_artikel'), table_name='artikel')
     op.drop_table('artikel')

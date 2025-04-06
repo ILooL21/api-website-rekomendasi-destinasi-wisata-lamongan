@@ -30,12 +30,8 @@ class TempatWisata(Base):
     jenis = Column(Enum("Alam","Religi","Buatan",name="jenis_tempat"), default="Alam",nullable=False)
     deskripsi = Column(Text)
     gambar = Column(String)
-    kontak = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
-
-    # Relasi ke koordinat wisata (one to one)
-    koordinat = relationship("KoordinatWisata", back_populates="tempat", uselist=False)
 
     # Relasi ke tiket wisata (one to many)
     tiket = relationship("TiketWisata", back_populates="tempat", cascade="all, delete-orphan")
@@ -46,27 +42,13 @@ class TempatWisata(Base):
     # Relasi ke rekomendasi wisata (one ke banyak)
     rekomendasi = relationship("RekomendasiWisataDetail", back_populates="wisata", cascade="all, delete-orphan")
 
-class KoordinatWisata(Base):
-    __tablename__ = "koordinat_wisata"
-
-    id_koordinat = Column(Integer, primary_key=True, index=True)
-    id_tempat_wisata = Column(Integer, ForeignKey("tempat_wisata.id_tempat_wisata", ondelete="CASCADE"))
-    latitude = Column(String)
-    longitude = Column(String)
-    created_at = Column(DateTime, default=datetime.now)
-    updated_at = Column(DateTime, onupdate=datetime.now)
-
-    # Relasi ke tempat wisata (one to one)
-    tempat = relationship("TempatWisata", back_populates="koordinat")
-
 class TiketWisata(Base):
     __tablename__ = "tiket_wisata"
 
     id_tiket = Column(Integer, primary_key=True, index=True)
     id_tempat_wisata = Column(Integer, ForeignKey("tempat_wisata.id_tempat_wisata", ondelete="CASCADE"))
-    kategori = Column(Enum("Reguler", "VIP", name="kategori"), default="Reguler", nullable=False)
     umur = Column(Enum("Dewasa", "Anak-anak", name="umur"), default="Dewasa", nullable=False)
-    hari = Column(Enum("Weekday", "Weekend/Hari Libur", name="hari"), default="Weekday", nullable=False)
+    hari = Column(Enum("Hari Kerja", "Hari Libur", name="hari"), default="Weekday", nullable=False)
     harga = Column(Integer)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
