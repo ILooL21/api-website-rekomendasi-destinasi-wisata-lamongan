@@ -3,6 +3,7 @@ import json
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import func
 
 from app.db.models import TempatWisata, SosmedWisata, TiketWisata
 from app.core.image import delete_image,simpan_gambar_unik
@@ -63,41 +64,25 @@ async def create_destination(
 
 # get all destination
 def get_all_destination(db: Session):
-    return db.query(TempatWisata).all()
+    # urutkan dari yang terbaru
+    return db.query(TempatWisata).order_by(TempatWisata.id_tempat_wisata).all()
 
-
-# get destination by id
-def get_destination_by_id(db: Session, id_tempat_wisata: int):
-    destination = db.query(TempatWisata).options(joinedload(TempatWisata.sosmed)) \
-        .filter(TempatWisata.id_tempat_wisata == id_tempat_wisata).first()
-
+def build_destination_response(destination):
     if not destination:
         raise HTTPException(status_code=404, detail="Destination not found")
 
-    # sosmed dictionary
-    sosmed_dict = {platform: None for platform in ["instagram", "facebook", "tiktok", "youtube", "twitter"]}
+    sosmed_dict = {key: None for key in ["instagram", "facebook", "tiktok", "youtube", "twitter"]}
     for s in destination.sosmed:
         sosmed_dict[s.sosmed.lower()] = s.link
 
-    # tiket dictionary awal
     tiket_dict = {
-        "hari_kerja": {
-            "dewasa": 0,
-            "anak": 0
-        },
-        "hari_libur": {
-            "dewasa": 0,
-            "anak": 0
-        }
+        "hari_kerja": {"dewasa": 0, "anak": 0},
+        "hari_libur": {"dewasa": 0, "anak": 0}
     }
-
     for t in destination.tiket:
-        hari_key = "hari_kerja" if t.hari == "Hari Kerja" else "hari_libur"
-        umur_key = "dewasa" if t.umur == "Dewasa" else "anak"
-        tiket_dict[hari_key][umur_key] = t.harga
-
-    if not destination:
-        raise HTTPException(status_code=404, detail="Destination not found")
+        hari = "hari_kerja" if t.hari == "Hari Kerja" else "hari_libur"
+        umur = "dewasa" if t.umur == "Dewasa" else "anak"
+        tiket_dict[hari][umur] = t.harga
 
     return {
         "id_tempat_wisata": destination.id_tempat_wisata,
@@ -109,6 +94,23 @@ def get_destination_by_id(db: Session, id_tempat_wisata: int):
         "sosmed": json.dumps(sosmed_dict),
         "tiket": json.dumps(tiket_dict),
     }
+
+def get_destination_data_by_name(db: Session, nama_tempat: str):
+    # Gantilah karakter "-" dengan spasi
+    nama_tempat = nama_tempat.replace("-", " ")
+
+    # Query dengan `ilike()` untuk pencarian case-insensitive
+    destination = db.query(TempatWisata).options(joinedload(TempatWisata.sosmed)).filter(
+        func.lower(TempatWisata.nama_tempat) == nama_tempat.lower()
+    ).first()
+
+    return build_destination_response(destination)
+
+def get_destination_by_id(db: Session, id_tempat_wisata: int):
+    destination = db.query(TempatWisata).options(joinedload(TempatWisata.sosmed)).filter(
+        TempatWisata.id_tempat_wisata == id_tempat_wisata
+    ).first()
+    return build_destination_response(destination)
 
 
 # update destination

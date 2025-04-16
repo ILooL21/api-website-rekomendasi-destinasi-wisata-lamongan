@@ -51,9 +51,11 @@ def get_all_artikel(db: Session):
             Artikel.gambar,
             Artikel.tipe,
             Artikel.tags,
+            Artikel.created_at,
             User.username.label("penulis"),
         )
         .join(User, Artikel.id_penulis == User.id_user)
+        .order_by(Artikel.id_artikel.desc())
         .all()
     )
 
@@ -68,64 +70,117 @@ def get_all_artikel(db: Session):
             "tipe": artikel.tipe,
             "tags": artikel.tags,
             "penulis": artikel.penulis,
+            "created_at": artikel.created_at,
         }
         for artikel in artikels
     ]
 
 
-# get artikel by id
 def get_artikel_by_id(db: Session, id_artikel: int):
-    return db.query(Artikel).filter(Artikel.id_artikel == id_artikel).first()
+    response = (
+        db.query(
+            Artikel.id_artikel,
+            Artikel.judul,
+            Artikel.isi,
+            Artikel.tanggal,
+            Artikel.gambar,
+            Artikel.tipe,
+            Artikel.tags,
+            Artikel.created_at,
+            User.username.label("penulis"),
+        )
+        .join(User, Artikel.id_penulis == User.id_user)
+        .filter(Artikel.id_artikel == id_artikel)
+        .order_by(Artikel.id_artikel)
+        .first()
+    )
 
-# update artikel
+    return [
+        {
+            "id_artikel": response.id_artikel,
+            "judul": response.judul,
+            "isi": response.isi,
+            "tanggal": response.tanggal,
+            "gambar": response.gambar,
+            "tipe": response.tipe,
+            "tags": response.tags,
+            "penulis": response.penulis,
+            "created_at": response.created_at,
+        }
+    ]
+
+# get latest
+def get_latest_artikel_data(db: Session):
+    latest_artikel = get_all_artikel(db)
+
+    # Mengambil 5 artikel terbaru
+    latest_artikel = latest_artikel[-5:] if len(latest_artikel) >= 5 else latest_artikel
+    return latest_artikel[::-1]
+
 async def update_artikel_data(db: Session, id_artikel: int, artikel_data: ArtikelRequestWithFormData):
-    # Cari artikel berdasarkan ID
-    db_artikel = get_artikel_by_id(db, id_artikel)
-    if not db_artikel:
+    # Ambil data artikel dari fungsi yang return list of dict
+    artikel_result = get_artikel_by_id(db, id_artikel)
+    if not artikel_result:
         raise HTTPException(status_code=404, detail="Artikel not found")
 
-    # jika type gambar adalah UploadFile
-    if artikel_data.gambar is not None :
-        if db_artikel.gambar and os.path.exists(db_artikel.gambar):
-            delete_image(db_artikel.gambar)
+    artikel_dict = artikel_result[0]  # Ambil dict dari list
+
+    # Ambil objek SQLAlchemy asli untuk update
+    db_artikel = db.query(Artikel).filter(Artikel.id_artikel == id_artikel).first()
+    if not db_artikel:
+        raise HTTPException(status_code=404, detail="Artikel object not found in DB")
+
+    # jika ada gambar baru
+    if artikel_data.gambar is not None:
+        if artikel_dict["gambar"] and os.path.exists(artikel_dict["gambar"]):
+            delete_image(artikel_dict["gambar"])
 
         # Simpan gambar baru
         image_path = await simpan_gambar_unik(artikel_data.gambar, UPLOAD_FOLDER)
         db_artikel.gambar = image_path
 
     try:
-        # Perbarui data artikel
+        # Update data
         db_artikel.judul = artikel_data.judul
         db_artikel.isi = artikel_data.isi
         db_artikel.tipe = artikel_data.tipe
         db_artikel.tags = ",".join(artikel_data.tags) if artikel_data.tags else ""
 
-        # Commit perubahan ke database
         db.commit()
         db.refresh(db_artikel)
 
-        # ✅ Pastikan mengembalikan data yang dapat di-encode JSON
         return db_artikel
 
     except Exception as e:
-        if artikel_data.gambar and os.path.exists(db_artikel.gambar):
+        if db_artikel.gambar and os.path.exists(db_artikel.gambar):
             delete_image(db_artikel.gambar)
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Failed to update artikel: {str(e)}")
 
 
 
+
 # delete artikel
 def delete_artikel_data(db: Session, id_artikel: int):
-    db_artikel = get_artikel_by_id(db, id_artikel)
+    db_artikel_list = get_artikel_by_id(db, id_artikel)
 
-    if db_artikel:
-        if db_artikel.gambar and os.path.exists(db_artikel.gambar):
-            delete_image(db_artikel.gambar)
+    if db_artikel_list:
+        db_artikel = db_artikel_list[0]
 
-        db.delete(db_artikel)
-        db.commit()
-        return {"message": "Artikel deleted"}
+        print(db_artikel["gambar"])
+
+        if db_artikel["gambar"] and os.path.exists(db_artikel["gambar"]):
+            delete_image(db_artikel["gambar"])
+
+        # Hapus dari tabel Artikel (pakai model aslinya)
+        artikel_obj = db.query(Artikel).filter(Artikel.id_artikel == id_artikel).first()
+        if artikel_obj:
+            db.delete(artikel_obj)
+            db.commit()
+            return {"message": "Artikel deleted"}
+        else:
+            raise HTTPException(status_code=404, detail="Artikel object not found in DB")
     else:
         raise HTTPException(status_code=404, detail="Artikel not found")
+
 

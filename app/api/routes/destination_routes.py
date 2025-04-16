@@ -1,11 +1,12 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Path,Form,File,UploadFile
+from fastapi import APIRouter, Depends, Path, Form, File, UploadFile
 from sqlalchemy.orm import Session
 
 from app.schemas.destination import DestinationRequestWithFormData, SosmedItem, TiketList
 from app.api.dependencies import get_db
-from app.services.destination_services import create_destination, get_all_destination, get_destination_by_id, update_destination_data, delete_destination_data
+from app.services.destination_services import create_destination, get_all_destination, get_destination_by_id, \
+    update_destination_data, delete_destination_data, get_destination_data_by_name
 
 import json
 
@@ -46,6 +47,10 @@ def list_destination(db: Session = Depends(get_db)):
 def get_destination(id_tempat_wisata: int = Path(..., title="Destination ID", description="Must be an integer"), db: Session = Depends(get_db)):
     return get_destination_by_id(db, id_tempat_wisata)
 
+@router.get("/details/{nama_tempat}")
+def get_destination_by_name(nama_tempat: str = Path(..., title="Destination Name", description="Must be a string"), db: Session = Depends(get_db)):
+    return get_destination_data_by_name(db, nama_tempat=nama_tempat)
+
 @router.put("/{id_tempat_wisata}/update")
 async def update_destination(
     id_tempat_wisata: int = Path(..., title="Destination ID", description="Must be an integer"),
@@ -76,3 +81,4 @@ async def update_destination(
 @router.delete("/{id_tempat_wisata}/delete")
 def delete_destination(id_tempat_wisata: int = Path(..., title="Destination ID", description="Must be an integer"), db: Session = Depends(get_db)):
     return delete_destination_data(db, id_tempat_wisata)
+

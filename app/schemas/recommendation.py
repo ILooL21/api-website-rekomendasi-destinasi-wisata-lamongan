@@ -1,0 +1,31 @@
+from pydantic import BaseModel
+from typing import Optional
+
+class RecommendationRequest(BaseModel):
+    escape: Optional[int] = None
+    relaxation: Optional[int] = None
+    play: Optional[int] = None
+    strengthening_family_bonds: Optional[int] = None
+    prestige: Optional[int] = None
+    social_interaction: Optional[int] = None
+    romance: Optional[int] = None
+    educational_opportunity: Optional[int] = None
+    self_fulfillment: Optional[int] = None
+    wish_fulfillment: Optional[int] = None
+    infrastruktur_pariwisata: Optional[int] = None
+    edukasi: Optional[int] = None
+    alam_sekitar: Optional[int] = None
+    atraksi_budaya_dan_sejarah: Optional[int] = None
+    kuliner: Optional[int] = None
+    makan: Optional[int] = None
+    belajar: Optional[int] = None
+    berinteraksi_dengan_satwa: Optional[int] = None
+    mengambil_foto: Optional[int] = None
+    berziarah: Optional[int] = None
+    berkemah: Optional[int] = None
+    melihat_pemandangan: Optional[int] = None
+    berbelanja: Optional[int] = None
+    berenang: Optional[int] = None
+    berendam: Optional[int] = None
+    memancing: Optional[int] = None
+    bermain_wahana: Optional[int] = None

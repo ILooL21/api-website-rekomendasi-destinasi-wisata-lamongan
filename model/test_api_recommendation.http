@@ -1,0 +1,33 @@
+POST http://127.0.0.1:8000/api/recommendations/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzQ0NjM3MjQ4fQ.G_srO4FzD6xzaj0kCVo9Fz6QU0SVGZ62IC1NOwLfUa0
+
+{
+    "escape": 1,
+    "relaxation": 1,
+    "play": 1,
+    "strengthening_family_bonds": 1,
+    "prestige": 0,
+    "social_interaction": 1,
+    "romance": 0,
+    "educational_opportunity": 0,
+    "self_fulfillment": 0,
+    "wish_fulfillment": 0,
+    "infrastruktur_pariwisata": 0,
+    "edukasi": 0,
+    "alam_sekitar": 1,
+    "atraksi_budaya_dan_sejarah": 0,
+    "kuliner": 0,
+    "berendam": 1,
+    "bermain_wahana": 1,
+    "melihat_pemandangan": 1,
+    "mengambil_foto": 1,
+    "berkemah": 0,
+    "berbelanja": 0,
+    "berziarah": 0,
+    "memancing": 0,
+    "berinteraksi_dengan_satwa": 0,
+    "makan": 0,
+    "belajar": 0,
+    "berenang": 0
+}

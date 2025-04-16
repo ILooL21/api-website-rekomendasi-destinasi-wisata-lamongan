@@ -17,7 +17,11 @@ def create_mail_log(db: Session, contact_data: ContactCreate):
 
 # Mendapatkan semua log email
 def get_all_mail_logs(db: Session):
-    return db.query(MailLog).all()
+    return db.query(MailLog).order_by(MailLog.id.desc()).all()
+
+# Mendapatkan log email berdasarkan id
+def get_mail_log_by_id(db: Session, id_contact: int):
+    return db.query(MailLog).filter(MailLog.id == id_contact).first()
 
 # hapus log email
 def delete_mail_log(db: Session, id_contact: int):

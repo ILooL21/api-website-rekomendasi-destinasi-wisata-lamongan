@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 
 from app.schemas.artikel import ArtikelRequestWithFormData
 from app.api.dependencies import get_db, get_current_active_user
-from app.services.artikel_services import create_artikel, get_all_artikel, get_artikel_by_id,update_artikel_data,delete_artikel_data
+from app.services.artikel_services import create_artikel, get_all_artikel, get_artikel_by_id, update_artikel_data, \
+    delete_artikel_data, get_latest_artikel_data
 from app.db.models import User
 
 import json
@@ -40,6 +41,10 @@ def list_artikel(db: Session = Depends(get_db)):
 @router.get("/{id_artikel}")
 def get_artikel(id_artikel: int = Path(..., title="Artikel ID", description="Must be an integer"), db: Session = Depends(get_db)):
     return get_artikel_by_id(db, id_artikel)
+
+@router.get("/data/latest")
+def get_latest_artikel(db: Session = Depends(get_db)):
+    return get_latest_artikel_data(db)
 
 @router.put("/{id_artikel}/update")
 async def update_artikel(

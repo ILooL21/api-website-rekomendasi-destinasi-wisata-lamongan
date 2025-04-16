@@ -39,9 +39,6 @@ class TempatWisata(Base):
     # Relasi ke sosmed wisata (one to many)
     sosmed = relationship("SosmedWisata", back_populates="tempat" , cascade="all, delete-orphan")
 
-    # Relasi ke rekomendasi wisata (one ke banyak)
-    rekomendasi = relationship("RekomendasiWisataDetail", back_populates="wisata", cascade="all, delete-orphan")
-
 class TiketWisata(Base):
     __tablename__ = "tiket_wisata"
 
@@ -88,13 +85,10 @@ class RekomendasiWisataDetail(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     id_rekomendasi = Column(Integer, ForeignKey("rekomendasi_wisata.id_rekomendasi"))
-    id_tempat_wisata = Column(Integer, ForeignKey("tempat_wisata.id_tempat_wisata"))
+    nama_tempat_wisata = Column(String)
 
     # Relasi ke rekomendasi
     rekomendasi = relationship("RekomendasiWisata", back_populates="wisata")
-
-    # Relasi ke tempat wisata
-    wisata = relationship("TempatWisata", back_populates="rekomendasi")
 
 class Artikel(Base):
     __tablename__ = "artikel"
