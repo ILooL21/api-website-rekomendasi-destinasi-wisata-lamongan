@@ -51,6 +51,7 @@ def predict_destination_recommendation(
         prediction.df = prediction.df.sort_values(by='p', ascending=False).head(5)
         result = json.loads(prediction.df.to_json(orient='records'))
 
+
         # Ambil rekomendasi yang sudah ada
         existing_recommendations = db.query(RekomendasiWisataDetail).filter(
             RekomendasiWisataDetail.id_rekomendasi == current_user.id_user

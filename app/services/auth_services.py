@@ -12,8 +12,8 @@ def check_access_token(token: str):
     return verify_token(token)
 
 # Autentikasi user
-def authenticate_user(db: Session, username: str, password: str):
-    user = db.query(User).filter(User.username == username).first()
+def authenticate_user(db: Session, email: str, password: str):
+    user = db.query(User).filter(User.email == email).first()
     if user and verify_password(password, user.password):
         return user
     return None

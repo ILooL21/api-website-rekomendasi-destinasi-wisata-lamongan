@@ -9,5 +9,5 @@ class TokenData(BaseModel):
     role: str | None = None
 
 class LoginRequest(BaseModel):
-    username: str
+    email: str
     password: str

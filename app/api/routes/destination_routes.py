@@ -22,6 +22,8 @@ async def add_destination(
     tiket: Optional[str] = Form(...),
     sosmed: Optional[str] = Form(...),
     gambar: UploadFile = File(...),
+    latitude: Optional[str] = Form(None),
+    longitude: Optional[str] = Form(None),
 ):
     list_tiket = TiketList(**json.loads(tiket))
     list_sosmed =  SosmedItem(**json.loads(sosmed))
@@ -34,6 +36,8 @@ async def add_destination(
         gambar=gambar,
         tiket=list_tiket,
         sosmed=list_sosmed,
+        latitude=latitude,
+        longitude=longitude,
     )
     result = await create_destination(db, destination_data)
 
@@ -62,6 +66,8 @@ async def update_destination(
     tiket: Optional[str] = Form(...),
     sosmed: Optional[str] = Form(...),
     gambar: Optional[UploadFile] = File(None),
+    latitude: Optional[str] = Form(None),
+    longitude: Optional[str] = Form(None),
 ):
     list_tiket = TiketList(**json.loads(tiket))
     list_sosmed = SosmedItem(**json.loads(sosmed))
@@ -74,6 +80,8 @@ async def update_destination(
         gambar=gambar,
         tiket=list_tiket,
         sosmed=list_sosmed,
+        latitude=latitude,
+        longitude=longitude,
     )
 
     return await update_destination_data(db, id_tempat_wisata, destination_data)

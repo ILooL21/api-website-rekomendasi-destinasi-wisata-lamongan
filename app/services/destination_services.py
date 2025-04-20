@@ -24,6 +24,8 @@ async def create_destination(
             jenis=destination_data.jenis,
             deskripsi=destination_data.deskripsi,
             gambar=image_path,
+            latitude=destination_data.latitude,
+            longitude=destination_data.longitude,
         )
         db.add(db_destination)
         db.commit()  # Commit dulu supaya ID bisa dipakai
@@ -93,6 +95,8 @@ def build_destination_response(destination):
         "gambar": destination.gambar,
         "sosmed": json.dumps(sosmed_dict),
         "tiket": json.dumps(tiket_dict),
+        "latitude": destination.latitude,
+        "longitude": destination.longitude,
     }
 
 def get_destination_data_by_name(db: Session, nama_tempat: str):
@@ -133,6 +137,8 @@ async def update_destination_data(db: Session, id_tempat_wisata: int, destinatio
         db_destination.alamat = destination_data.alamat
         db_destination.jenis = destination_data.jenis
         db_destination.deskripsi = destination_data.deskripsi
+        db_destination.latitude = destination_data.latitude
+        db_destination.longitude = destination_data.longitude
 
         db.commit()
         db.refresh(db_destination)

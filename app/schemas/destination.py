@@ -31,15 +31,7 @@ class DestinationRequestWithFormData(BaseModel):
     sosmed: SosmedItem
     tiket: TiketList
     gambar: Optional[UploadFile] = File(None)
+    latitude: Optional[str] = Form(None)
+    longitude: Optional[str] = Form(None)
 
-
-class DestinationResponse(BaseModel):
-    id_tempat_wisata: int
-    nama_tempat: str
-    alamat: str
-    jenis: str
-    deskripsi: str
-    gambar: Optional[str]
-    created_at: str
-    updated_at: str
 

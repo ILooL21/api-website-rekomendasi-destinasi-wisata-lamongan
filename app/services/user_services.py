@@ -35,10 +35,6 @@ def create_user(db: Session, user_data: UserCreate):
 
     return db_user
 
-# Mendapatkan user berdasarkan username
-def get_user_by_username(db: Session, username: int):
-    return db.query(User).filter(User.username == username).first()
-
 # Mendapatkan user berdasarkan id
 def get_user_by_id(db: Session, id_user: int):
     return db.query(User).filter(User.id_user == id_user).first()
@@ -58,13 +54,18 @@ def get_all_users(db: Session, current_user: User) -> List[UserSchema]:
         for user in users
     ]
 
-def is_username_taken(db: Session, username: str, exclude_id: int = None) -> bool:
-    user = get_user_by_username(db, username)
+# get by email
+def get_user_by_email(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()
+
+def is_email_taken(db: Session, email: str, exclude_id: int = None) -> bool:
+    user = get_user_by_email(db, email)
 
     if user and (exclude_id is None or user.id_user != exclude_id):
         return True
 
     return False
+
 
 # Menghapus user
 def delete_user(db: Session, id_user: int, current_user: User):
@@ -83,8 +84,8 @@ def update_user(db: Session, id_user: int, user_data: UserCreate, current_user: 
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    if is_username_taken(db, user_data.username, exclude_id=id_user):
-        raise HTTPException(status_code=400, detail="Username sudah digunakan")
+    if is_email_taken(db, user_data.email, exclude_id=id_user):
+        raise HTTPException(status_code=400, detail="Email sudah digunakan")
 
     db_user.username = user_data.username
     db_user.email = user_data.email

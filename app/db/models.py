@@ -30,6 +30,8 @@ class TempatWisata(Base):
     jenis = Column(Enum("Alam","Religi","Buatan",name="jenis_tempat"), default="Alam",nullable=False)
     deskripsi = Column(Text)
     gambar = Column(String)
+    latitude = Column(String)
+    longitude = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
 
@@ -70,7 +72,7 @@ class RekomendasiWisata(Base):
     __tablename__ = "rekomendasi_wisata"
 
     id_rekomendasi = Column(Integer, primary_key=True, index=True)
-    id_user = Column(Integer, ForeignKey("users.id_user"))
+    id_user = Column(Integer, ForeignKey("users.id_user",ondelete="CASCADE"))
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
 
@@ -84,7 +86,7 @@ class RekomendasiWisataDetail(Base):
     __tablename__ = "rekomendasi_wisata_detail"
 
     id = Column(Integer, primary_key=True, index=True)
-    id_rekomendasi = Column(Integer, ForeignKey("rekomendasi_wisata.id_rekomendasi"))
+    id_rekomendasi = Column(Integer, ForeignKey("rekomendasi_wisata.id_rekomendasi", ondelete="CASCADE"))
     nama_tempat_wisata = Column(String)
 
     # Relasi ke rekomendasi
