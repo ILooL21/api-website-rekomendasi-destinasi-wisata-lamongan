@@ -52,11 +52,11 @@ cd api-website-rekomendasi-destinasi-wisata-lamongan
 ### 2️⃣ Buat Virtual Environment & Install Dependencies
 ```bash
 # buat virtual environment
-python -m venv venv
+python -m venv .venv
 
 # aktifkan virtual environment
-source venv/bin/activate  # Mac/Linux
-venv\Scripts\activate     # Windows
+source .venv/bin/activate  # Mac/Linux
+.venv\Scripts\activate     # Windows
 
 # install dependencies
 pip install -r requirements.txt
@@ -88,12 +88,6 @@ ALLOWED_HOSTS=your_allowed_host_here
 ALLOWED_METHODS=your_allowed_methods_here
 ALLOWED_HEADERS=your_allowed_headers_here
 ALLOWED_CREDENTIALS=True
-
-# Email Settings
-SMTP_HOST=your_smtp_host_here
-SMTP_PORT=your_smtp_port_here
-EMAIL_ADDRESS=your_email_address_here
-EMAIL_PASSWORD=yout_email_password_here
 
 ```
 
