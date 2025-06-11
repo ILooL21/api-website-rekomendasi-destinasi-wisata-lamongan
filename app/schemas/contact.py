@@ -7,10 +7,12 @@ class ContactBase(BaseModel):
     subject: str
     message: str
 
+
 class ContactCreate(ContactBase):
     pass
 
 class ContactResponse(ContactBase):
     id: int
+    status: str = "Belum Dibalas"  # Default status
     created_at: datetime
     updated_at: Optional[datetime] = None

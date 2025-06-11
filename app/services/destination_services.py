@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 
-from app.db.models import TempatWisata, SosmedWisata, TiketWisata
+from app.db.models import TempatWisata, SosmedWisata
 from app.core.image import delete_image,simpan_gambar_unik
 from app.schemas.destination import DestinationRequestWithFormData
 
@@ -23,6 +23,8 @@ async def create_destination(
             alamat=destination_data.alamat,
             jenis=destination_data.jenis,
             deskripsi=destination_data.deskripsi,
+            deskripsi_tiket=destination_data.deskripsi_tiket,
+            link_tiket=destination_data.link_tiket,
             gambar=image_path,
             latitude=destination_data.latitude,
             longitude=destination_data.longitude,
@@ -42,21 +44,6 @@ async def create_destination(
 
         db.commit()
 
-        if destination_data.tiket:
-            for hari, harga in destination_data.tiket.model_dump(exclude_none=True).items():
-                for umur, harga_value in harga.items():
-                    db_tiket = TiketWisata(
-                        id_tempat_wisata=db_destination.id_tempat_wisata,
-                        hari=hari.replace("_", " ").title(),
-                        # jika dewasa maka umur = Dewasa, jika anak maka umur = Anak-anak
-                        umur= "Anak-anak" if umur == "anak" else "Dewasa",
-                        harga=harga_value
-                    )
-
-                    db.add(db_tiket)
-
-        db.commit()
-
         return db_destination
     except Exception as e:
         if image_path and os.path.exists(image_path):
@@ -64,7 +51,7 @@ async def create_destination(
         raise HTTPException(status_code=500, detail=f"Failed to create destination: {str(e)}")
 
 
-# get all destination
+# get all destinations
 def get_all_destination(db: Session):
     # urutkan dari yang terbaru
     return db.query(TempatWisata).order_by(TempatWisata.id_tempat_wisata).all()
@@ -77,31 +64,23 @@ def build_destination_response(destination):
     for s in destination.sosmed:
         sosmed_dict[s.sosmed.lower()] = s.link
 
-    tiket_dict = {
-        "hari_kerja": {"dewasa": 0, "anak": 0},
-        "hari_libur": {"dewasa": 0, "anak": 0}
-    }
-    for t in destination.tiket:
-        hari = "hari_kerja" if t.hari == "Hari Kerja" else "hari_libur"
-        umur = "dewasa" if t.umur == "Dewasa" else "anak"
-        tiket_dict[hari][umur] = t.harga
-
     return {
         "id_tempat_wisata": destination.id_tempat_wisata,
         "nama_tempat": destination.nama_tempat,
         "alamat": destination.alamat,
         "jenis": destination.jenis,
         "deskripsi": destination.deskripsi,
+        "deskripsi_tiket": destination.deskripsi_tiket,
+        "link_tiket": destination.link_tiket,
         "gambar": destination.gambar,
         "sosmed": json.dumps(sosmed_dict),
-        "tiket": json.dumps(tiket_dict),
         "latitude": destination.latitude,
         "longitude": destination.longitude,
     }
 
 def get_destination_data_by_name(db: Session, nama_tempat: str):
     # Gantilah karakter "-" dengan spasi
-    nama_tempat = nama_tempat.replace("-", " ")
+    nama_tempat = nama_tempat.replace("-", " ").replace("_", "-")
 
     # Query dengan `ilike()` untuk pencarian case-insensitive
     destination = db.query(TempatWisata).options(joinedload(TempatWisata.sosmed)).filter(
@@ -137,6 +116,8 @@ async def update_destination_data(db: Session, id_tempat_wisata: int, destinatio
         db_destination.alamat = destination_data.alamat
         db_destination.jenis = destination_data.jenis
         db_destination.deskripsi = destination_data.deskripsi
+        db_destination.deskripsi_tiket = destination_data.deskripsi_tiket
+        db_destination.link_tiket = destination_data.link_tiket
         db_destination.latitude = destination_data.latitude
         db_destination.longitude = destination_data.longitude
 
@@ -151,16 +132,6 @@ async def update_destination_data(db: Session, id_tempat_wisata: int, destinatio
         for platform, link in destination_data.sosmed.model_dump(exclude_none=True).items():
             existing_sosmed_dict[platform.lower()].link = link
 
-        db.commit()
-
-        # update tiket
-        existing_tiket = db.query(TiketWisata).filter(TiketWisata.id_tempat_wisata == id_tempat_wisata).all()
-        existing_tiket_dict = {(t.hari, t.umur): t for t in existing_tiket}
-
-        # Update tiket yang ada di database
-        for hari, harga in destination_data.tiket.model_dump(exclude_none=True).items():
-            for umur, harga_value in harga.items():
-                existing_tiket_dict[(hari.replace("_", " ").title(), "Anak-anak" if umur == "anak" else "Dewasa")].harga = harga_value
         db.commit()
 
         return db_destination
@@ -178,7 +149,7 @@ def delete_destination_data(db: Session, id_tempat_wisata: int):
         if not destination:
             raise HTTPException(status_code=404, detail="Destination not found")
 
-        # Delete image file if it exists
+        # Delete image files if it exists
         if destination.gambar and os.path.exists(destination.gambar):
             delete_image(destination.gambar)
 

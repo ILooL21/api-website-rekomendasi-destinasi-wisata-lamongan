@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Path, Form, File, UploadFile
 from sqlalchemy.orm import Session
 
-from app.schemas.destination import DestinationRequestWithFormData, SosmedItem, TiketList
+from app.schemas.destination import DestinationRequestWithFormData, SosmedItem
 from app.api.dependencies import get_db
 from app.services.destination_services import create_destination, get_all_destination, get_destination_by_id, \
     update_destination_data, delete_destination_data, get_destination_data_by_name
@@ -19,13 +19,13 @@ async def add_destination(
     nama_tempat: str = Form(...),
     alamat: str = Form(...),
     jenis: str = Form(...),
-    tiket: Optional[str] = Form(...),
+    deskripsi_tiket: Optional[str] = Form(None),
+    link_tiket: Optional[str] = Form(None),
     sosmed: Optional[str] = Form(...),
     gambar: UploadFile = File(...),
     latitude: Optional[str] = Form(None),
     longitude: Optional[str] = Form(None),
 ):
-    list_tiket = TiketList(**json.loads(tiket))
     list_sosmed =  SosmedItem(**json.loads(sosmed))
 
     destination_data = DestinationRequestWithFormData(
@@ -34,7 +34,8 @@ async def add_destination(
         alamat=alamat,
         jenis=jenis,
         gambar=gambar,
-        tiket=list_tiket,
+        deskripsi_tiket=deskripsi_tiket,
+        link_tiket=link_tiket,
         sosmed=list_sosmed,
         latitude=latitude,
         longitude=longitude,
@@ -63,13 +64,13 @@ async def update_destination(
     nama_tempat: str = Form(...),
     alamat: str = Form(...),
     jenis: str = Form(...),
-    tiket: Optional[str] = Form(...),
+    deskripsi_tiket: Optional[str] = Form(None),
+    link_tiket: Optional[str] = Form(None),
     sosmed: Optional[str] = Form(...),
     gambar: Optional[UploadFile] = File(None),
     latitude: Optional[str] = Form(None),
     longitude: Optional[str] = Form(None),
 ):
-    list_tiket = TiketList(**json.loads(tiket))
     list_sosmed = SosmedItem(**json.loads(sosmed))
 
     destination_data = DestinationRequestWithFormData(
@@ -78,7 +79,8 @@ async def update_destination(
         alamat=alamat,
         jenis=jenis,
         gambar=gambar,
-        tiket=list_tiket,
+        deskripsi_tiket=deskripsi_tiket,
+        link_tiket=link_tiket,
         sosmed=list_sosmed,
         latitude=latitude,
         longitude=longitude,

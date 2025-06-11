@@ -109,13 +109,40 @@ def get_artikel_by_id(db: Session, id_artikel: int):
         }
     ]
 
-# get latest
-def get_latest_artikel_data(db: Session):
-    latest_artikel = get_all_artikel(db)
+def get_latest_artikel_data(db: Session, limit: int = 5):
+    latest_artikels = (
+        db.query(
+            Artikel.id_artikel,
+            Artikel.judul,
+            Artikel.isi,
+            Artikel.tanggal,
+            Artikel.gambar,
+            Artikel.tipe,
+            Artikel.tags,
+            Artikel.created_at,
+            User.username.label("penulis"),
+        )
+        .join(User, Artikel.id_penulis == User.id_user)
+        .order_by(Artikel.id_artikel.desc())
+        .limit(limit)  # 2. Batasi hasilnya HANYA sebanyak `limit`
+        .all()  # 3. Eksekusi query
+    )
 
-    # Mengambil 5 artikel terbaru
-    latest_artikel = latest_artikel[-5:] if len(latest_artikel) >= 5 else latest_artikel
-    return latest_artikel[::-1]
+    # Konversi hasil query ke list of dict, sama seperti fungsi Anda yang lain
+    return [
+        {
+            "id_artikel": artikel.id_artikel,
+            "judul": artikel.judul,
+            "isi": artikel.isi,
+            "tanggal": artikel.tanggal,
+            "gambar": artikel.gambar,
+            "tipe": artikel.tipe,
+            "tags": artikel.tags,
+            "penulis": artikel.penulis,
+            "created_at": artikel.created_at,
+        }
+        for artikel in latest_artikels
+    ]
 
 async def update_artikel_data(db: Session, id_artikel: int, artikel_data: ArtikelRequestWithFormData):
     # Ambil data artikel dari fungsi yang return list of dict

@@ -26,7 +26,7 @@ def get_mail_log(id_contact: int = Path(..., title="Contact ID", description="Mu
 # 🔹 Get Mail log count
 @router.get("/detail/count")
 def get_mail_log_count(db: Session = Depends(get_db)):
-    return db.query(MailLog).count()
+    return db.query(MailLog).where(MailLog.status == "Belum Dibalas").count()
 
 # 🔹 Reply Mail
 # @router.post("/{id_contact}/reply", response_model=ContactResponse)

@@ -9,14 +9,6 @@ class SosmedItem(BaseModel):
     youtube: str = ""
     twitter: str = ""
 
-class TiketItem(BaseModel):
-    dewasa: Optional[int] = 0
-    anak: Optional[int] = 0
-
-class TiketList(BaseModel):
-    hari_kerja: TiketItem
-    hari_libur: TiketItem
-
 class DestinationBase(BaseModel):
     nama_tempat: str
     alamat: str
@@ -29,7 +21,8 @@ class DestinationRequestWithFormData(BaseModel):
     jenis: str = Form(...)
     deskripsi: str = Form(...)
     sosmed: SosmedItem
-    tiket: TiketList
+    deskripsi_tiket: Optional[str] = None
+    link_tiket: Optional[str] = None
     gambar: Optional[UploadFile] = File(None)
     latitude: Optional[str] = Form(None)
     longitude: Optional[str] = Form(None)

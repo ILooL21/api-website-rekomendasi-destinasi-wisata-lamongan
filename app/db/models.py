@@ -30,30 +30,15 @@ class TempatWisata(Base):
     jenis = Column(Enum("Alam","Religi","Buatan",name="jenis_tempat"), default="Alam",nullable=False)
     deskripsi = Column(Text)
     gambar = Column(String)
+    deskripsi_tiket = Column(Text)
+    link_tiket = Column(String)
     latitude = Column(String)
     longitude = Column(String)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
 
-    # Relasi ke tiket wisata (one to many)
-    tiket = relationship("TiketWisata", back_populates="tempat", cascade="all, delete-orphan")
-
     # Relasi ke sosmed wisata (one to many)
     sosmed = relationship("SosmedWisata", back_populates="tempat" , cascade="all, delete-orphan")
-
-class TiketWisata(Base):
-    __tablename__ = "tiket_wisata"
-
-    id_tiket = Column(Integer, primary_key=True, index=True)
-    id_tempat_wisata = Column(Integer, ForeignKey("tempat_wisata.id_tempat_wisata", ondelete="CASCADE"))
-    umur = Column(Enum("Dewasa", "Anak-anak", name="umur"), default="Dewasa", nullable=False)
-    hari = Column(Enum("Hari Kerja", "Hari Libur", name="hari"), default="Weekday", nullable=False)
-    harga = Column(Integer)
-    created_at = Column(DateTime, default=datetime.now)
-    updated_at = Column(DateTime, onupdate=datetime.now)
-
-    # Relasi ke tempat wisata (one to many)
-    tempat = relationship("TempatWisata", back_populates="tiket")
 
 class SosmedWisata(Base):
     __tablename__ = "sosmed_wisata"
@@ -116,5 +101,6 @@ class MailLog(Base):
     email = Column(String)
     subject = Column(String)
     message = Column(String)
+    status = Column(Enum("Selesai", "Belum Dibalas", name="status_email"), default="Belum Dibalas", nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, onupdate=datetime.now)
