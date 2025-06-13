@@ -109,7 +109,7 @@ def get_artikel_by_id(db: Session, id_artikel: int):
         }
     ]
 
-def get_latest_artikel_data(db: Session, limit: int = 2):
+def get_latest_artikel_data(db: Session, limit: int = 3):
     latest_artikels = (
         db.query(
             Artikel.id_artikel,
